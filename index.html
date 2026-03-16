@@ -523,8 +523,8 @@ function createLevel(worldNum, levelNum) {
         tiles[14][15] = T.CRACKED; tiles[14][16] = T.CRACKED;
         tiles[14][35] = T.CRACKED; tiles[14][36] = T.CRACKED;
         tiles[12][47] = T.DOOR; tiles[13][47] = T.DOOR;
-        spawns.enemies.push({ type: 'vacuum', x: 12, y: 13 });
-        spawns.enemies.push({ type: 'mailman', x: 28, y: 13 });
+        spawns.enemies.push({ type: 'pigeon', x: 12, y: 6 });
+        spawns.enemies.push({ type: 'cat', x: 28, y: 13 });
         spawns.enemies.push({ type: 'cat', x: 38, y: 13 });
         addTreats(9, 10, 3); addTreats(33, 7, 3); addTreats(41, 9, 3);
         spawns.collectibles.push({ type: 'squeaky', x: 15, y: 9 });
@@ -563,8 +563,8 @@ function createLevel(worldNum, levelNum) {
         addPlatform(3, 11, 3); addPlatform(18, 11, 3); addPlatform(35, 11, 4); addPlatform(42, 9, 3);
         tiles[12][47] = T.DOOR; tiles[13][47] = T.DOOR;
         spawns.enemies.push({ type: 'squirrel', x: 18, y: 13 });
-        spawns.enemies.push({ type: 'vacuum', x: 35, y: 13 });
-        spawns.enemies.push({ type: 'cat', x: 42, y: 13 });
+        spawns.enemies.push({ type: 'bear', x: 35, y: 13 });
+        spawns.enemies.push({ type: 'porcupine', x: 42, y: 13 });
         addTreats(5, 13, 3); addTreats(17, 13, 4); addTreats(33, 13, 5);
         // Squeaky toys on elevated platforms — reward for jumping
         spawns.collectibles.push({ type: 'squeaky', x: 4, y: 10 });   // on platform at (3, y=11)
@@ -591,29 +591,63 @@ function createLevel(worldNum, levelNum) {
         spawns.collectibles.push({ type: 'golden', x: 21, y: 10 });
         spawns.collectibles.push({ type: 'water', x: 30, y: 13 });
     } else if (worldNum === 3 && levelNum === 3) {
-        // 3-3: Deep Cave
+        // 3-3: Deep Cave — multi-tiered cavern with 3 height levels
         fillGround(0, 49);
-        // Cave walls on top
-        for (let x = 5; x <= 45; x++) { tiles[0][x] = T.CAVE_WALL; tiles[1][x] = T.CAVE_WALL; tiles[2][x] = T.CAVE_WALL; }
-        addPlatform(8, 11, 4, T.CAVE_WALL); addPlatform(14, 11, 3, T.CAVE_WALL); addPlatform(18, 11, 3, T.CAVE_WALL);
-        addPlatform(25, 11, 4, T.CAVE_WALL); addPlatform(33, 9, 3, T.CAVE_WALL);
-        addPlatform(40, 10, 4, T.CAVE_WALL);
-        // Soft dirt for digging
-        tiles[14][12] = T.DIRT_SOFT; tiles[15][12] = T.DIRT_SOFT; tiles[16][12] = T.DIRT_SOFT;
-        tiles[14][30] = T.DIRT_SOFT; tiles[15][30] = T.DIRT_SOFT; tiles[16][30] = T.DIRT_SOFT;
+        // Cave ceiling
+        for (let x = 0; x <= 49; x++) { tiles[0][x] = T.CAVE_WALL; tiles[1][x] = T.CAVE_WALL; tiles[2][x] = T.CAVE_WALL; }
+        // Stalactite pillars (ceiling to mid-level walls)
+        for (let x = 20; x <= 22; x++) { tiles[3][x] = T.CAVE_WALL; tiles[4][x] = T.CAVE_WALL; }
+        for (let x = 38; x <= 39; x++) { tiles[3][x] = T.CAVE_WALL; tiles[4][x] = T.CAVE_WALL; tiles[5][x] = T.CAVE_WALL; }
+
+        // === TIER 1: Ground level (y=14) — entry area ===
+        // Platforms to reach tier 2
+        addPlatform(3, 11, 4, T.CAVE_WALL);    // step up from ground
+        addPlatform(10, 11, 3, T.CAVE_WALL);
+
+        // === TIER 2: Mid level (y=8) — main cave exploration ===
+        addPlatform(7, 8, 4, T.CAVE_WALL);     // reachable from (3,11) → 3 tiles up
+        addPlatform(14, 8, 3, T.CAVE_WALL);
+        addPlatform(19, 11, 3, T.CAVE_WALL);   // drop-down back to ground route
+        addPlatform(24, 8, 4, T.CAVE_WALL);
+        addPlatform(30, 11, 3, T.CAVE_WALL);
+        addPlatform(31, 8, 3, T.CAVE_WALL);    // reachable from (30,11)
+        addPlatform(37, 11, 3, T.CAVE_WALL);
+
+        // === TIER 3: High level (y=5) — hardest to reach, best rewards ===
+        addPlatform(9, 5, 3, T.CAVE_WALL);     // reachable from (7,8) → 3 tiles up
+        addPlatform(25, 5, 4, T.CAVE_WALL);    // reachable from (24,8)
+        addPlatform(34, 5, 3, T.CAVE_WALL);    // reachable from (31,8)
+
+        // Right side — staircase down to door
+        addPlatform(41, 8, 3, T.CAVE_WALL);
+        addPlatform(44, 11, 4, T.CAVE_WALL);
         tiles[12][47] = T.DOOR; tiles[13][47] = T.DOOR;
-        spawns.enemies.push({ type: 'vacuum', x: 15, y: 13 });
-        spawns.enemies.push({ type: 'bear', x: 28, y: 13 });
-        spawns.enemies.push({ type: 'cat', x: 38, y: 13 });
-        spawns.enemies.push({ type: 'porcupine', x: 20, y: 13 });
-        spawns.enemies.push({ type: 'porcupine', x: 35, y: 13 });
-        addTreats(9, 13, 3); addTreats(26, 13, 3); addTreats(41, 13, 3);
-        spawns.collectibles.push({ type: 'squeaky', x: 19, y: 10 });
-        spawns.collectibles.push({ type: 'squeaky', x: 9, y: 10 });
-        spawns.collectibles.push({ type: 'squeaky', x: 41, y: 9 });
-        spawns.collectibles.push({ type: 'golden', x: 34, y: 8 });
-        spawns.collectibles.push({ type: 'water', x: 26, y: 10 });
-        spawns.checkpoints.push({ x: 25, y: 13 });
+
+        // Enemies — world 3 appropriate
+        spawns.enemies.push({ type: 'bear', x: 15, y: 7 });       // on tier 2
+        spawns.enemies.push({ type: 'porcupine', x: 25, y: 13 }); // on ground
+        spawns.enemies.push({ type: 'bear', x: 35, y: 13 });      // on ground
+        spawns.enemies.push({ type: 'porcupine', x: 42, y: 7 });  // on tier 2
+        spawns.enemies.push({ type: 'cat', x: 20, y: 10 });       // on mid platform
+
+        // Treats on ground
+        addTreats(5, 13, 4); addTreats(22, 13, 4); addTreats(40, 13, 4);
+        // Treats on mid platforms
+        addTreats(8, 7, 3); addTreats(25, 7, 3); addTreats(32, 7, 3);
+
+        // Squeaky toys spread across tiers (early, mid, late)
+        spawns.collectibles.push({ type: 'squeaky', x: 11, y: 10 }); // tier 1 platform
+        spawns.collectibles.push({ type: 'squeaky', x: 26, y: 4 });  // tier 3! high reward
+        spawns.collectibles.push({ type: 'squeaky', x: 42, y: 7 });  // tier 2 right side
+
+        // Golden treat on highest platform (tier 3)
+        spawns.collectibles.push({ type: 'golden', x: 10, y: 4 });
+
+        // Water bowls on mid-tier platforms
+        spawns.collectibles.push({ type: 'water', x: 15, y: 7 });
+        spawns.collectibles.push({ type: 'water', x: 35, y: 4 });
+
+        spawns.checkpoints.push({ x: 30, y: 13 });
     } else if (worldNum === 3 && levelNum === 4) {
         // 3-4: Dogcatcher's Lair (final boss) — staircase arena
         fillGround(0, 49);
@@ -1859,6 +1893,20 @@ function generateTextures(scene) {
     ntc.fillRect(0, 0, 1, 12);
     ntc.fillRect(13, 0, 1, 12);
     netCanvas.refresh();
+
+    // Water droplet — 8x10, blue teardrop for sprinkler projectiles
+    const dropCanvas = scene.textures.createCanvas('water_drop', 8, 10);
+    const drc = dropCanvas.context;
+    drc.fillStyle = '#40A0E0';
+    drc.fillRect(3, 0, 2, 2);      // top point
+    drc.fillRect(2, 2, 4, 2);
+    drc.fillRect(1, 4, 6, 3);      // widest
+    drc.fillRect(2, 7, 4, 2);
+    drc.fillRect(3, 9, 2, 1);      // bottom
+    // Highlight
+    drc.fillStyle = '#80D0FF';
+    drc.fillRect(2, 3, 2, 2);
+    dropCanvas.refresh();
 
     // Heart 14x13
     const heartCanvas = scene.textures.createCanvas('heart', 14, 13);
@@ -3683,7 +3731,24 @@ class GameScene extends Phaser.Scene {
                     e.setTint(0x80E080); // Friendly color
                     e.body.setImmovable(true);
                     e.body.setVelocity(0, 0);
+                    e.body.setAcceleration(0, 0);
                     e.body.setAllowGravity(false);
+                    e.body.moves = false; // Fully freeze physics
+                    // Sleeping zzZ animation
+                    const zzz = this.add.text(e.x + 10, e.y - 15, 'z', {
+                        fontSize: '8px', fontFamily: 'monospace', color: '#FFFFFF'
+                    });
+                    this.tweens.add({
+                        targets: zzz, y: e.y - 35, alpha: 0, duration: 1500,
+                        repeat: -1, onRepeat: () => { zzz.y = e.y - 15; zzz.alpha = 1; }
+                    });
+                    const zz2 = this.add.text(e.x + 16, e.y - 10, 'Z', {
+                        fontSize: '10px', fontFamily: 'monospace', color: '#FFFFFF'
+                    });
+                    this.tweens.add({
+                        targets: zz2, y: e.y - 30, alpha: 0, duration: 1800, delay: 500,
+                        repeat: -1, onRepeat: () => { zz2.y = e.y - 10; zz2.alpha = 1; }
+                    });
                 }
             });
             this.abilityCooldown = 800;
@@ -3775,8 +3840,7 @@ class GameScene extends Phaser.Scene {
                     if (enemy.shootTimer > 3000) {
                         // Shoot 3 water droplets in an arc
                         for (let a = -1; a <= 1; a++) {
-                            const proj = this.projectiles.create(enemy.x + a * 10, enemy.y - 10, 'letter');
-                            proj.setTint(0x60C0FF);
+                            const proj = this.projectiles.create(enemy.x + a * 10, enemy.y - 10, 'water_drop');
                             proj.body.setVelocityX(a * 60);
                             proj.body.setVelocityY(-200);
                             proj.body.setAllowGravity(true);
