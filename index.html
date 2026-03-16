@@ -204,18 +204,6 @@ function showGameTouchControls(show) {
 }
 </script>
 <script>
-window.addEventListener('error', function(e) {
-    const el = document.createElement('div');
-    el.style.cssText = 'position:fixed;top:0;left:0;background:red;color:white;padding:10px;z-index:9999;font:14px monospace;max-width:100vw;word-wrap:break-word';
-    el.textContent = 'ERROR: ' + (e.error ? e.error.stack || e.error.message : e.message);
-    document.body.appendChild(el);
-});
-window.addEventListener('unhandledrejection', function(e) {
-    const el = document.createElement('div');
-    el.style.cssText = 'position:fixed;top:0;left:0;background:orange;color:white;padding:10px;z-index:9999;font:14px monospace;max-width:100vw;word-wrap:break-word';
-    el.textContent = 'REJECTION: ' + e.reason;
-    document.body.appendChild(el);
-});
 // ============================================================
 // SECTION 1: CONSTANTS & CONFIG
 // ============================================================
@@ -263,62 +251,6 @@ const SAVE_KEY = 'doggie_game_save';
 // ============================================================
 // Each sprite is a 2D array of hex color strings, '0' = transparent
 // Using shorthand color codes for compactness
-
-function createDogFrames(pal, w, h, type) {
-    const frames = [];
-    // We'll generate simplified but charming pixel art dogs
-    // Each frame is [rows][cols] of color strings
-
-    if (type === 'mango') {
-        // 12x14 tiny terrier - idle
-        frames.push([
-            '000000000000','000000000000','000BB0000000','00BDDB000000',
-            '00BDDBE00000','000DDB000000','00CDDDC00000','0CCDDDCC0000',
-            '0CDDDDDC0000','00CDDDCC0000','000CDDC00000','000CL0C00000',
-            '000C00C00000','000C00C00000'
-        ].map(r => r.match(/.{1}/g).map(c => ({
-            '0': null, 'B': pal.body, 'D': pal.dark, 'L': pal.light, 'E': pal.eye, 'C': pal.body, 'N': pal.nose, 'R': pal.collar
-        })[c] || null)));
-        // Run frames (shift legs)
-        for (let f = 0; f < 4; f++) {
-            const fr = frames[0].map(r => [...r]);
-            // Shift leg pixels for animation
-            if (f % 2 === 0) {
-                if (fr[12]) { fr[12][3] = pal.body; fr[12][5] = null; }
-                if (fr[13]) { fr[13][3] = pal.dark; fr[13][5] = null; }
-            }
-            frames.push(fr);
-        }
-        // Jump frame
-        frames.push(frames[0].map(r => [...r]));
-    } else if (type === 'violet') {
-        // 14x18 tall greyhound - idle
-        frames.push([
-            '00000000000000','00000000000000','00BBB000000000','00BDDBB0000000',
-            '000BDDB0000000','000DDEB0000000','0000DDB0000000','0000RRRR000000',
-            '000BDDDB000000','00BBDDDB000000','00BDDDDBB00000','000BDDDB000000',
-            '0000BDDB000000','0000BDDB000000','0000B00B000000','0000B00B000000',
-            '0000B00B000000','0000B00B000000'
-        ].map(r => r.match(/.{1}/g).map(c => ({
-            '0': null, 'B': pal.body, 'D': pal.dark, 'L': pal.light, 'E': pal.eye, 'R': pal.collar
-        })[c] || null)));
-        for (let f = 0; f < 4; f++) frames.push(frames[0].map(r => [...r]));
-        frames.push(frames[0].map(r => [...r]));
-    } else {
-        // mochi 18x16 stocky mutt - idle
-        frames.push([
-            '000000000000000000','000000000000000000','000BBB000000000000','00BDDDB0000000000B',
-            '00BDDEB0000000000B','000DDB00000000000B','000RRRRRR000000000','00BDDDDDB00000000B',
-            '0BBDDDDDDBB0000000','0BDDDDDDDB00000000','0BPDDDDPDB00000000','00BDDDDDB00000000B',
-            '000BDDDB0000000000','000B00B00000000000','000B00B00000000000','000B00B00000000000'
-        ].map(r => r.match(/.{1}/g).map(c => ({
-            '0': null, 'B': pal.body, 'D': pal.dark, 'L': pal.light, 'E': pal.eye, 'P': pal.patch || pal.light, 'R': pal.collar
-        })[c] || null)));
-        for (let f = 0; f < 4; f++) frames.push(frames[0].map(r => [...r]));
-        frames.push(frames[0].map(r => [...r]));
-    }
-    return frames;
-}
 
 // Tile pixel data (16x16 each)
 function getTileColor(tileId, x, y) {
@@ -2350,14 +2282,8 @@ function defaultSave() {
 class BootScene extends Phaser.Scene {
     constructor() { super('Boot'); }
     create() {
-        try {
-            generateTextures(this);
-            this.scene.start('Title');
-        } catch(e) {
-            console.error('Texture generation failed:', e);
-            // Show error on screen
-            this.add.text(10, 10, 'Error: ' + e.message, { fontSize: '10px', color: '#FF0000' });
-        }
+        generateTextures(this);
+        this.scene.start('Title');
     }
 }
 
@@ -2692,7 +2618,6 @@ class GameScene extends Phaser.Scene {
     constructor() { super('Game'); }
 
     create(data) {
-      try {
         showGameTouchControls(true);
         this.dogType = data.dog || 'mango';
         this.worldNum = data.world || 1;
@@ -3400,10 +3325,6 @@ class GameScene extends Phaser.Scene {
 
         // Particles emitter (simple)
         this.dustParticles = [];
-      } catch(e) {
-        console.error('GameScene create error:', e);
-        this.add.text(10, 10, 'CREATE ERROR: ' + e.message, { fontSize: '8px', color: '#FF0000' }).setScrollFactor(0).setDepth(999);
-      }
     }
 
     getTileHexColor(tile) {
@@ -3465,7 +3386,6 @@ class GameScene extends Phaser.Scene {
     }
 
     update(time, delta) {
-      try {
         if (this.dead || this.won || this.drowning) return;
         this.levelTime += delta;
 
@@ -3665,13 +3585,6 @@ class GameScene extends Phaser.Scene {
 
         // Touch pause
         if (touchJustDown.pause) this.pauseGame();
-      } catch(e) {
-        if (!this._updateErrorShown) {
-            console.error('GameScene update error:', e);
-            this.add.text(10, 30, 'UPDATE ERROR: ' + e.message, { fontSize: '8px', color: '#FF0000' }).setScrollFactor(0).setDepth(999);
-            this._updateErrorShown = true;
-        }
-      }
     }
 
     useAbility() {

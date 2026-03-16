@@ -225,8 +225,6 @@ On death, player respawns at last checkpoint with:
 
 ### Technical
 - Background `Math.random()` calls in building window generation mean backgrounds look different each time a level loads
-- The `createDogFrames()` function at the top of the file is dead code (never called)
-- Error display divs from debugging are still in the code
 
 ### Content Ideas
 - Narrative intro (comic panels)
