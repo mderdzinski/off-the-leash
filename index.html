@@ -2339,59 +2339,56 @@ class TitleScene extends Phaser.Scene {
         fenceGfx.fillRect(0, 290, GAME_WIDTH, 4);
         fenceGfx.fillRect(0, 305, GAME_WIDTH, 4);
 
-        // === TITLE ===
-        // Dark banner behind title for readability
-        this.add.rectangle(cx, 62, 500, 70, 0x000000, 0.3).setOrigin(0.5);
+        // === SINGLE UNIFIED PANEL for title + controls ===
+        this.add.rectangle(cx, 145, 540, 260, 0x000000, 0.45).setOrigin(0.5);
 
-        this.add.text(cx, 45, 'OFF THE LEASH!', {
-            fontSize: '48px', fontFamily: 'monospace', color: '#FFD700',
-            stroke: '#4A2810', strokeThickness: 6
+        // Title
+        this.add.text(cx, 68, 'OFF THE LEASH!', {
+            fontSize: '42px', fontFamily: 'monospace', color: '#FFD700',
+            stroke: '#4A2810', strokeThickness: 5
         }).setOrigin(0.5);
 
-        this.add.text(cx, 85, 'The Adventures of Mango, Violet & Mochi', {
+        this.add.text(cx, 105, 'The Adventures of Mango, Violet & Mochi', {
             fontSize: '12px', fontFamily: 'monospace', color: '#FFF8E0'
         }).setOrigin(0.5);
 
-        // === THREE DOGS (animated, on the grass) ===
-        const dogY = 295;
-        const mango = this.add.image(cx - 120, dogY, 'mango').setScale(3);
-        const violet = this.add.image(cx, dogY - 8, 'violet').setScale(3);
-        const mochi = this.add.image(cx + 120, dogY, 'mochi').setScale(3);
-
-        // Idle bounce animations
-        this.tweens.add({ targets: mango, y: dogY - 4, duration: 500, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-        this.tweens.add({ targets: violet, y: dogY - 12, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut', delay: 200 });
-        this.tweens.add({ targets: mochi, y: dogY - 3, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.easeInOut', delay: 400 });
-
-        // Dog names
-        this.add.text(cx - 120, dogY + 45, 'Mango', { fontSize: '13px', fontFamily: 'monospace', color: '#F0E0B8', stroke: '#4A3020', strokeThickness: 3 }).setOrigin(0.5);
-        this.add.text(cx, dogY + 45, 'Violet', { fontSize: '13px', fontFamily: 'monospace', color: '#C0C0D0', stroke: '#3A3050', strokeThickness: 3 }).setOrigin(0.5);
-        this.add.text(cx + 120, dogY + 45, 'Mochi', { fontSize: '13px', fontFamily: 'monospace', color: '#D07030', stroke: '#4A2010', strokeThickness: 3 }).setOrigin(0.5);
-
-        // === UI PANEL (semi-transparent, centered) ===
-        this.add.rectangle(cx, 175, 420, 130, 0x000000, 0.35).setOrigin(0.5);
-
         // Start prompt
-        const startText = this.add.text(cx, 135, 'Press SPACE or tap to play!', {
+        const startText = this.add.text(cx, 138, 'Press SPACE or tap to play!', {
             fontSize: '18px', fontFamily: 'monospace', color: '#FFFFFF',
             stroke: '#000000', strokeThickness: 2
         }).setOrigin(0.5);
         this.tweens.add({ targets: startText, alpha: 0.3, duration: 700, yoyo: true, repeat: -1 });
 
         // Controls
-        this.add.text(cx, 165, 'WASD: Move  |  Space/W: Jump  |  Shift: Ability', {
+        this.add.text(cx, 170, 'WASD: Move  |  Space/W: Jump  |  Shift: Ability', {
             fontSize: '10px', fontFamily: 'monospace', color: '#D0D0D0'
         }).setOrigin(0.5);
 
-        this.add.text(cx, 182, 'M: Mute  |  P: Pause  |  Touch supported!', {
+        this.add.text(cx, 186, 'M: Mute  |  P: Pause  |  Touch supported!', {
             fontSize: '9px', fontFamily: 'monospace', color: '#A0A0A0'
         }).setOrigin(0.5);
 
         // Hardcore mode toggle
         const save = loadSave();
-        const modeText = this.add.text(cx, 205, '', {
+        const modeText = this.add.text(cx, 210, '', {
             fontSize: '10px', fontFamily: 'monospace', color: '#C0C0C0'
         }).setOrigin(0.5);
+
+        // === THREE DOGS (animated, on the grass below panel) ===
+        const dogY = 290;
+        const mango = this.add.image(cx - 130, dogY, 'mango').setScale(3);
+        const violet = this.add.image(cx, dogY - 8, 'violet').setScale(3);
+        const mochi = this.add.image(cx + 130, dogY, 'mochi').setScale(3);
+
+        // Idle bounce animations
+        this.tweens.add({ targets: mango, y: dogY - 4, duration: 500, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+        this.tweens.add({ targets: violet, y: dogY - 12, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut', delay: 200 });
+        this.tweens.add({ targets: mochi, y: dogY - 3, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.easeInOut', delay: 400 });
+
+        // Dog names (on the grass, below dogs)
+        this.add.text(cx - 130, 330, 'Mango', { fontSize: '13px', fontFamily: 'monospace', color: '#F0E0B8', stroke: '#2A1810', strokeThickness: 3 }).setOrigin(0.5);
+        this.add.text(cx, 330, 'Violet', { fontSize: '13px', fontFamily: 'monospace', color: '#C0C0D0', stroke: '#2A2840', strokeThickness: 3 }).setOrigin(0.5);
+        this.add.text(cx + 130, 330, 'Mochi', { fontSize: '13px', fontFamily: 'monospace', color: '#F0A050', stroke: '#3A1808', strokeThickness: 3 }).setOrigin(0.5);
         const updateModeText = () => {
             const s = loadSave();
             if (s.hardcore) {
@@ -2412,7 +2409,7 @@ class TitleScene extends Phaser.Scene {
         });
 
         // === DOGCATCHER (sneaking in background) ===
-        const catcher = this.add.image(-40, 300, 'boss').setScale(0.8).setAlpha(0.4);
+        const catcher = this.add.image(-40, 300, 'boss').setScale(0.8).setAlpha(0.4).setDepth(-1);
         this.tweens.add({ targets: catcher, x: GAME_WIDTH + 40, duration: 15000, repeat: -1, delay: 3000 });
 
         // Start game
