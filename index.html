@@ -2295,71 +2295,110 @@ class TitleScene extends Phaser.Scene {
         sfx.stopMusic();
         showGameTouchControls(false);
         const cx = GAME_WIDTH / 2;
+        const cy = GAME_HEIGHT / 2;
 
-        // Sky background
-        this.cameras.main.setBackgroundColor(PAL.SKY);
+        // === ANIMATED BACKGROUND ===
+        this.cameras.main.setBackgroundColor('#5AAAE0');
 
-        // Ground
-        const gfx = this.add.graphics();
-        gfx.fillStyle(0x4A8C38, 1); gfx.fillRect(0, 340, GAME_WIDTH, 92);
-        gfx.fillStyle(0x6B4830, 1); gfx.fillRect(0, 360, GAME_WIDTH, 72);
+        // Scrolling clouds
+        const cloudGfx = this.add.graphics();
+        cloudGfx.fillStyle(0xFFFFFF, 0.5);
+        for (let i = 0; i < 10; i++) {
+            const cw = 40 + (i * 17 % 30);
+            cloudGfx.fillRect(i * 80, 30 + (i % 3) * 25, cw, 14);
+            cloudGfx.fillRect(i * 80 + 8, 24 + (i % 3) * 25, cw - 16, 10);
+        }
+        this.tweens.add({ targets: cloudGfx, x: -60, duration: 20000, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
 
-        // Title text
-        this.add.text(cx, 55, 'OFF THE LEASH!', {
-            fontSize: '42px', fontFamily: 'monospace', color: '#FFD700',
-            stroke: '#6B4830', strokeThickness: 5
-        }).setOrigin(0.5);
-
-        this.add.text(cx, 115, 'The Adventures of Mango, Violet & Mochi', {
-            fontSize: '13px', fontFamily: 'monospace', color: '#FFFFFF'
-        }).setOrigin(0.5);
-
-        // Draw three dogs on title using their canvas textures
-        const dogY = 310;
-        try {
-            this.add.image(cx - 100, dogY, 'mango').setScale(3);
-            this.add.image(cx, dogY - 6, 'violet').setScale(3);
-            this.add.image(cx + 100, dogY, 'mochi').setScale(3);
-        } catch(e) {
-            this.add.rectangle(cx - 100, dogY, 18, 21, 0xF0E0B8).setScale(3);
-            this.add.rectangle(cx, dogY - 6, 21, 27, 0x9898A8).setScale(3);
-            this.add.rectangle(cx + 100, dogY, 27, 24, 0xD07030).setScale(3);
+        // Distant hills
+        const hillGfx = this.add.graphics();
+        hillGfx.fillStyle(0x5A9A48, 0.4);
+        for (let i = 0; i < 12; i++) {
+            hillGfx.fillCircle(i * 70 + 20, 310, 50 + (i * 13 % 20));
         }
 
-        // Labels
-        this.add.text(cx - 100, dogY + 50, 'Mango', { fontSize: '12px', fontFamily: 'monospace', color: '#F0E0B8' }).setOrigin(0.5);
-        this.add.text(cx, dogY + 50, 'Violet', { fontSize: '12px', fontFamily: 'monospace', color: '#C0C0D0' }).setOrigin(0.5);
-        this.add.text(cx + 100, dogY + 50, 'Mochi', { fontSize: '12px', fontFamily: 'monospace', color: '#D07030' }).setOrigin(0.5);
+        // Green ground
+        const groundGfx = this.add.graphics();
+        groundGfx.fillStyle(0x4A8C38, 1); groundGfx.fillRect(0, 320, GAME_WIDTH, 112);
+        groundGfx.fillStyle(0x3A7828, 1); groundGfx.fillRect(0, 330, GAME_WIDTH, 102);
+        // Grass tufts
+        groundGfx.fillStyle(0x5AA048, 1);
+        for (let i = 0; i < 30; i++) {
+            groundGfx.fillRect(i * 22 + 5, 318, 4, 6);
+            groundGfx.fillRect(i * 22 + 10, 316, 3, 8);
+        }
 
-        // Blinking start text
-        const startText = this.add.text(cx, 180, 'Press ENTER or SPACE to Start', {
-            fontSize: '16px', fontFamily: 'monospace', color: '#FFFFFF'
+        // Fence in background
+        const fenceGfx = this.add.graphics();
+        fenceGfx.fillStyle(0xD8C8A0, 0.6);
+        for (let i = 0; i < 20; i++) {
+            fenceGfx.fillRect(i * 36 + 8, 280, 5, 40);
+            fenceGfx.fillRect(i * 36 + 8, 278, 5, 4);
+        }
+        fenceGfx.fillStyle(0xC8B890, 0.5);
+        fenceGfx.fillRect(0, 290, GAME_WIDTH, 4);
+        fenceGfx.fillRect(0, 305, GAME_WIDTH, 4);
+
+        // === TITLE ===
+        // Dark banner behind title for readability
+        this.add.rectangle(cx, 62, 500, 70, 0x000000, 0.3).setOrigin(0.5);
+
+        this.add.text(cx, 45, 'OFF THE LEASH!', {
+            fontSize: '48px', fontFamily: 'monospace', color: '#FFD700',
+            stroke: '#4A2810', strokeThickness: 6
         }).setOrigin(0.5);
 
-        this.tweens.add({
-            targets: startText, alpha: 0.2, duration: 600, yoyo: true, repeat: -1
-        });
-
-        // Controls info
-        this.add.text(cx, 220, 'WASD: Move  |  Space/W: Jump  |  Shift: Ability  |  M: Mute', {
-            fontSize: '11px', fontFamily: 'monospace', color: '#D0D0D0'
+        this.add.text(cx, 85, 'The Adventures of Mango, Violet & Mochi', {
+            fontSize: '12px', fontFamily: 'monospace', color: '#FFF8E0'
         }).setOrigin(0.5);
-        this.add.text(cx, 236, 'Touch controls available on mobile!', {
-            fontSize: '8px', fontFamily: 'monospace', color: '#808080'
+
+        // === THREE DOGS (animated, on the grass) ===
+        const dogY = 295;
+        const mango = this.add.image(cx - 120, dogY, 'mango').setScale(3);
+        const violet = this.add.image(cx, dogY - 8, 'violet').setScale(3);
+        const mochi = this.add.image(cx + 120, dogY, 'mochi').setScale(3);
+
+        // Idle bounce animations
+        this.tweens.add({ targets: mango, y: dogY - 4, duration: 500, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+        this.tweens.add({ targets: violet, y: dogY - 12, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.easeInOut', delay: 200 });
+        this.tweens.add({ targets: mochi, y: dogY - 3, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.easeInOut', delay: 400 });
+
+        // Dog names
+        this.add.text(cx - 120, dogY + 45, 'Mango', { fontSize: '13px', fontFamily: 'monospace', color: '#F0E0B8', stroke: '#4A3020', strokeThickness: 3 }).setOrigin(0.5);
+        this.add.text(cx, dogY + 45, 'Violet', { fontSize: '13px', fontFamily: 'monospace', color: '#C0C0D0', stroke: '#3A3050', strokeThickness: 3 }).setOrigin(0.5);
+        this.add.text(cx + 120, dogY + 45, 'Mochi', { fontSize: '13px', fontFamily: 'monospace', color: '#D07030', stroke: '#4A2010', strokeThickness: 3 }).setOrigin(0.5);
+
+        // === UI PANEL (semi-transparent, centered) ===
+        this.add.rectangle(cx, 175, 420, 130, 0x000000, 0.35).setOrigin(0.5);
+
+        // Start prompt
+        const startText = this.add.text(cx, 135, 'Press SPACE or tap to play!', {
+            fontSize: '18px', fontFamily: 'monospace', color: '#FFFFFF',
+            stroke: '#000000', strokeThickness: 2
+        }).setOrigin(0.5);
+        this.tweens.add({ targets: startText, alpha: 0.3, duration: 700, yoyo: true, repeat: -1 });
+
+        // Controls
+        this.add.text(cx, 165, 'WASD: Move  |  Space/W: Jump  |  Shift: Ability', {
+            fontSize: '10px', fontFamily: 'monospace', color: '#D0D0D0'
+        }).setOrigin(0.5);
+
+        this.add.text(cx, 182, 'M: Mute  |  P: Pause  |  Touch supported!', {
+            fontSize: '9px', fontFamily: 'monospace', color: '#A0A0A0'
         }).setOrigin(0.5);
 
         // Hardcore mode toggle
         const save = loadSave();
-        const modeText = this.add.text(cx, 250, '', {
+        const modeText = this.add.text(cx, 205, '', {
             fontSize: '10px', fontFamily: 'monospace', color: '#C0C0C0'
         }).setOrigin(0.5);
         const updateModeText = () => {
             const s = loadSave();
             if (s.hardcore) {
-                modeText.setText('Mode: HARDCORE (game over = start over)  [H to toggle]');
+                modeText.setText('[H] HARDCORE — game over = start over');
                 modeText.setColor('#E06060');
             } else {
-                modeText.setText('Mode: Normal (progress saved)  [H to toggle]');
+                modeText.setText('[H] Normal — progress saved');
                 modeText.setColor('#80C080');
             }
         };
@@ -2372,16 +2411,23 @@ class TitleScene extends Phaser.Scene {
             updateModeText();
         });
 
+        // === DOGCATCHER (sneaking in background) ===
+        const catcher = this.add.image(-40, 300, 'boss').setScale(0.8).setAlpha(0.4);
+        this.tweens.add({ targets: catcher, x: GAME_WIDTH + 40, duration: 15000, repeat: -1, delay: 3000 });
+
+        // Start game
         const startGame = () => {
             sfx.resume(); sfx.play('select');
-            // Hardcore mode: wipe save on every new game
             const s = loadSave();
             if (s.hardcore) {
                 const fresh = defaultSave();
                 fresh.hardcore = true;
                 saveSave(fresh);
             }
-            this.scene.start('CharacterSelect');
+            this.cameras.main.fadeOut(300, 0, 0, 0);
+            this.cameras.main.once('camerafadeoutcomplete', () => {
+                this.scene.start('CharacterSelect');
+            });
         };
         this.input.keyboard.on('keydown-SPACE', startGame);
         this.input.keyboard.on('keydown-ENTER', startGame);
