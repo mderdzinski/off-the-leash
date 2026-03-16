@@ -63,9 +63,10 @@ Everything is in one HTML file. No build tools, no server, no external assets.
 1. **Chain rule**: Every platform must be reachable from the previous one, starting from ground (y=14). Trace the full path.
 2. **Max vertical**: From surface at y=M, can reach y = M-3 (e.g., ground y=14 → platform y=11)
 3. **Max horizontal**: Gap between right edge of one platform and left edge of next must be <= 4 tiles
-4. **Stepping stones**: If a gap is too wide, add an intermediate platform at y=12 or y=13
+4. **Stepping stones**: If a gap is too wide, add an intermediate platform at y=11 to bridge it
 5. **Staircase pattern**: For height, use ground(y=14) → y=11 → y=8 (two 3-tile jumps)
 6. **No dead ends**: Always a way back down without dying
+7. **Minimum clearance**: Platforms above ground MUST be at y=11 or higher (never y=12 or y=13). Violet is 27px tall — a platform at y=12 leaves only 24px of clearance, blocking her. Minimum gap = 2 tiles (48px). **Never use y=12 or y=13 for platforms over walkable ground.**
 
 ### Collectible Placement
 

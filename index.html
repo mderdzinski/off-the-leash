@@ -361,7 +361,7 @@ function createLevel(worldNum, levelNum) {
         // Small gaps and platforms
         for (let x = 18; x <= 20; x++) { tiles[14][x] = T.EMPTY; tiles[15][x] = T.EMPTY; tiles[16][x] = T.EMPTY; }
         addPlatform(16, 11, 3);
-        addPlatform(22, 12, 3);
+        addPlatform(22, 11, 3);
         addPlatform(28, 11, 4);
         addPlatform(35, 11, 3);
         // Fences
@@ -381,7 +381,7 @@ function createLevel(worldNum, levelNum) {
         addTreats(14, 13, 3);
         addTreats(29, 13, 3);
         spawns.collectibles.push({ type: 'squeaky', x: 17, y: 10 });  // on platform y=11
-        spawns.collectibles.push({ type: 'squeaky', x: 23, y: 11 }); // on platform y=12
+        spawns.collectibles.push({ type: 'squeaky', x: 23, y: 10 }); // on platform y=11
         spawns.collectibles.push({ type: 'squeaky', x: 36, y: 10 }); // on platform y=11
         spawns.collectibles.push({ type: 'water', x: 29, y: 10 });   // on platform y=11
         spawns.collectibles.push({ type: 'golden', x: 35, y: 10 });  // on platform y=11
@@ -393,7 +393,7 @@ function createLevel(worldNum, levelNum) {
         for (let x = 12; x <= 14; x++) { tiles[14][x] = T.EMPTY; tiles[15][x] = T.EMPTY; tiles[16][x] = T.EMPTY; }
         for (let x = 30; x <= 33; x++) { tiles[14][x] = T.EMPTY; tiles[15][x] = T.EMPTY; tiles[16][x] = T.EMPTY; }
         addPlatform(10, 11, 4);
-        addPlatform(16, 12, 3);
+        addPlatform(16, 11, 3);
         addPlatform(20, 11, 5);
         addPlatform(34, 11, 3);
         addPlatform(40, 10, 4);
@@ -403,7 +403,7 @@ function createLevel(worldNum, levelNum) {
         spawns.enemies.push({ type: 'vacuum', x: 25, y: 13 });
         spawns.enemies.push({ type: 'mailman', x: 37, y: 13 });
         spawns.enemies.push({ type: 'sprinkler', x: 22, y: 13 });
-        addTreats(5, 13, 4); addTreats(21, 13, 4); addTreats(41, 13, 3);
+        addTreats(5, 13, 4); addTreats(21, 13, 1); addTreats(23, 13, 2); addTreats(41, 13, 3);
         spawns.collectibles.push({ type: 'squeaky', x: 42, y: 9 });
         spawns.collectibles.push({ type: 'squeaky', x: 13, y: 10 });
         spawns.collectibles.push({ type: 'squeaky', x: 35, y: 10 });
@@ -413,7 +413,7 @@ function createLevel(worldNum, levelNum) {
     } else if (worldNum === 1 && levelNum === 3) {
         // 1-3: The Dog Park (vertical platforming)
         fillGround(0, 49);
-        addPlatform(5, 12, 3); addPlatform(10, 10, 3); addPlatform(15, 8, 3);
+        addPlatform(5, 11, 3); addPlatform(10, 10, 3); addPlatform(15, 8, 3);
         addPlatform(20, 6, 4); addPlatform(26, 8, 3); addPlatform(30, 10, 3);
         addPlatform(35, 7, 4); addPlatform(40, 9, 3); addPlatform(44, 11, 3);
         tiles[12][47] = T.DOOR; tiles[13][47] = T.DOOR;
@@ -578,7 +578,7 @@ function createLevel(worldNum, levelNum) {
         // 3-2: Ice Pond
         fillGround(0, 49);
         for (let x = 10; x <= 40; x++) tiles[14][x] = T.ICE;
-        addPlatform(15, 11, 3); addPlatform(20, 12, 3); addPlatform(25, 11, 4); addPlatform(35, 11, 3);
+        addPlatform(15, 11, 3); addPlatform(20, 11, 3); addPlatform(25, 11, 4); addPlatform(35, 11, 3);
         tiles[12][47] = T.DOOR; tiles[13][47] = T.DOOR;
         spawns.enemies.push({ type: 'squirrel', x: 20, y: 13 });
         spawns.enemies.push({ type: 'squirrel', x: 30, y: 13 });
@@ -588,14 +588,14 @@ function createLevel(worldNum, levelNum) {
         spawns.collectibles.push({ type: 'squeaky', x: 26, y: 10 });
         spawns.collectibles.push({ type: 'squeaky', x: 16, y: 10 });
         spawns.collectibles.push({ type: 'squeaky', x: 36, y: 10 });
-        spawns.collectibles.push({ type: 'golden', x: 21, y: 11 });
+        spawns.collectibles.push({ type: 'golden', x: 21, y: 10 });
         spawns.collectibles.push({ type: 'water', x: 30, y: 13 });
     } else if (worldNum === 3 && levelNum === 3) {
         // 3-3: Deep Cave
         fillGround(0, 49);
         // Cave walls on top
         for (let x = 5; x <= 45; x++) { tiles[0][x] = T.CAVE_WALL; tiles[1][x] = T.CAVE_WALL; tiles[2][x] = T.CAVE_WALL; }
-        addPlatform(8, 11, 4, T.CAVE_WALL); addPlatform(14, 12, 3, T.CAVE_WALL); addPlatform(18, 11, 3, T.CAVE_WALL);
+        addPlatform(8, 11, 4, T.CAVE_WALL); addPlatform(14, 11, 3, T.CAVE_WALL); addPlatform(18, 11, 3, T.CAVE_WALL);
         addPlatform(25, 11, 4, T.CAVE_WALL); addPlatform(33, 9, 3, T.CAVE_WALL);
         addPlatform(40, 10, 4, T.CAVE_WALL);
         // Soft dirt for digging
@@ -626,8 +626,8 @@ function createLevel(worldNum, levelNum) {
         // Center elevated platform (reachable from either y=8 platform, 3 tiles across)
         addPlatform(19, 8, 6, T.BRICK);
         // Low center platforms for recovery
-        addPlatform(14, 12, 4, T.BRICK);
-        addPlatform(30, 12, 4, T.BRICK);
+        addPlatform(14, 11, 4, T.BRICK);
+        addPlatform(30, 11, 4, T.BRICK);
         tiles[12][47] = T.DOOR; tiles[13][47] = T.DOOR;
         spawns.enemies.push({ type: 'boss', x: 22, y: 13, phase: 3 });
         spawns.collectibles.push({ type: 'water', x: 4, y: 10 });
@@ -3106,7 +3106,8 @@ class GameScene extends Phaser.Scene {
         }
         this.player.body.setSize(this.stats.width, this.stats.height);
         // Collide with left/right/top world bounds but NOT bottom (pits kill you)
-        this.player.body.setCollideWorldBounds(false);
+        this.player.body.setCollideWorldBounds(true);
+        this.player.body.onWorldBounds = true;
         this.physics.world.setBoundsCollision(true, true, true, false);
         this.player.body.setGravityY(GRAVITY);
         this.player.body.setMaxVelocity(this.stats.speed, 600);
@@ -3170,10 +3171,10 @@ class GameScene extends Phaser.Scene {
 
         // Enemy overlap with player
         this.physics.add.overlap(this.player, this.enemies, (player, enemy) => {
-            if (this.dead || this.won || enemy.dying) return;
+            if (this.dead || this.won || enemy.dying || enemy.calmed) return;
             // Check if stomping
-            // Porcupines can't be stomped — always hurt
-            if (enemy.enemyType === 'porcupine') {
+            // Porcupines and sprinklers can't be stomped — always hurt
+            if (enemy.enemyType === 'porcupine' || enemy.enemyType === 'sprinkler') {
                 if (!this.invincible && !this.isDashing) this.hurtPlayer();
             } else if (player.body.velocity.y > 0 && player.body.bottom < enemy.body.top + 12) {
                 this.stompEnemy(enemy);
@@ -3331,15 +3332,12 @@ class GameScene extends Phaser.Scene {
             fontSize: '12px', fontFamily: 'monospace', color: '#FFFFFF'
         }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(100);
 
-        // Dog indicator
-        this.add.text(14, 30, this.dogType.toUpperCase(), {
-            fontSize: '10px', fontFamily: 'monospace', color: '#C0C0C0'
-        }).setScrollFactor(0).setDepth(100);
-
-        // Ability cooldown indicator
-        this.abilityText = this.add.text(14, 42, `[SHIFT] ${this.stats.ability}`, {
-            fontSize: '10px', fontFamily: 'monospace', color: '#80FF80'
-        }).setScrollFactor(0).setDepth(100);
+        // Ability cooldown indicator (not shown for Violet — her double jump is passive)
+        if (this.dogType !== 'violet') {
+            this.abilityText = this.add.text(14, 30, `[SHIFT] ${this.stats.ability}`, {
+                fontSize: '10px', fontFamily: 'monospace', color: '#80FF80'
+            }).setScrollFactor(0).setDepth(100);
+        }
 
         // Input
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -3513,9 +3511,11 @@ class GameScene extends Phaser.Scene {
         // Ability cooldown
         if (this.abilityCooldown > 0) {
             this.abilityCooldown -= delta;
-            this.abilityText.setColor('#804040');
-            this.abilityText.setText(`[SHIFT] ${this.stats.ability} (${Math.ceil(this.abilityCooldown / 1000)}s)`);
-        } else {
+            if (this.abilityText) {
+                this.abilityText.setColor('#804040');
+                this.abilityText.setText(`[SHIFT] ${this.stats.ability} (${Math.ceil(this.abilityCooldown / 1000)}s)`);
+            }
+        } else if (this.abilityText) {
             this.abilityText.setColor('#80FF80');
             this.abilityText.setText(`[SHIFT] ${this.stats.ability}`);
         }
@@ -3683,6 +3683,7 @@ class GameScene extends Phaser.Scene {
                     e.setTint(0x80E080); // Friendly color
                     e.body.setImmovable(true);
                     e.body.setVelocity(0, 0);
+                    e.body.setAllowGravity(false);
                 }
             });
             this.abilityCooldown = 800;
