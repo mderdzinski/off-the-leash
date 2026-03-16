@@ -323,8 +323,10 @@ const ENEMY_COLORS = {
 // Each level: { width, height, tiles[][], spawns: {player, enemies[], collectibles[]} }
 
 function createLevel(worldNum, levelNum) {
-    // Level 1-4 is wider (auto-scroll chase level)
-    const W = (worldNum === 1 && levelNum === 4) ? 80 : 50;
+    // Boss levels stay 50, chase is 80, regular levels are 100
+    const isBossLevel = levelNum === 4;
+    const isChase = worldNum === 1 && levelNum === 4;
+    const W = isChase ? 80 : isBossLevel ? 50 : 100;
     const H = 17; // tiles high (272px)
     const tiles = [];
     for (let y = 0; y < H; y++) {
@@ -334,7 +336,8 @@ function createLevel(worldNum, levelNum) {
         }
     }
 
-    const spawns = { player: { x: 2, y: 12 }, enemies: [], collectibles: [], door: { x: 47, y: 12 }, movingPlatforms: [], checkpoints: [] };
+    const doorX = isBossLevel ? 47 : isChase ? 77 : 97;
+    const spawns = { player: { x: 2, y: 12 }, enemies: [], collectibles: [], door: { x: doorX, y: 12 }, movingPlatforms: [], checkpoints: [] };
 
     // Ground baseline
     function fillGround(startX, endX, groundY = 14) {
@@ -358,7 +361,7 @@ function createLevel(worldNum, levelNum) {
 
     if (worldNum === 1 && levelNum === 1) {
         // 1-1: The Front Yard (tutorial)
-        fillGround(0, 49);
+        fillGround(0, 99);
         // Small gaps and platforms
         for (let x = 18; x <= 20; x++) { tiles[14][x] = T.EMPTY; tiles[15][x] = T.EMPTY; tiles[16][x] = T.EMPTY; }
         addPlatform(16, 11, 3);
@@ -371,7 +374,7 @@ function createLevel(worldNum, levelNum) {
         // Hydrant
         tiles[13][10] = T.HYDRANT;
         // Door at end
-        tiles[12][47] = T.DOOR; tiles[13][47] = T.DOOR;
+        tiles[12][97] = T.DOOR; tiles[13][97] = T.DOOR;
         // Enemies
         spawns.enemies.push({ type: 'vacuum', x: 15, y: 13 });
         spawns.enemies.push({ type: 'vacuum', x: 30, y: 13 });
@@ -388,9 +391,33 @@ function createLevel(worldNum, levelNum) {
         spawns.collectibles.push({ type: 'golden', x: 35, y: 10 });  // on platform y=11
         // Soft dirt for Mango
         tiles[14][25] = T.DIRT_SOFT; tiles[15][25] = T.DIRT_SOFT;
+        // === SECOND HALF (x=50-97) ===
+        // Pits
+        for (let x = 58; x <= 60; x++) { tiles[14][x] = T.EMPTY; tiles[15][x] = T.EMPTY; tiles[16][x] = T.EMPTY; }
+        for (let x = 75; x <= 78; x++) { tiles[14][x] = T.EMPTY; tiles[15][x] = T.EMPTY; tiles[16][x] = T.EMPTY; }
+        // Platforms
+        addPlatform(55, 11, 4); addPlatform(62, 11, 3); addPlatform(68, 9, 4);
+        addPlatform(72, 11, 3); addPlatform(80, 11, 4); addPlatform(85, 9, 3);
+        addPlatform(90, 11, 4);
+        // Fences
+        tiles[13][55] = T.FENCE; tiles[13][56] = T.FENCE;
+        tiles[13][88] = T.FENCE; tiles[13][89] = T.FENCE;
+        // Enemies
+        spawns.enemies.push({ type: 'vacuum', x: 65, y: 13 });
+        spawns.enemies.push({ type: 'mailman', x: 73, y: 13 });
+        spawns.enemies.push({ type: 'sprinkler', x: 82, y: 13 });
+        spawns.enemies.push({ type: 'vacuum', x: 92, y: 13 });
+        // Treats
+        addTreats(52, 13, 5); addTreats(63, 13, 4); addTreats(81, 13, 1); addTreats(83, 13, 2);
+        // Collectibles on platforms
+        spawns.collectibles.push({ type: 'squeaky', x: 69, y: 8 });
+        spawns.collectibles.push({ type: 'water', x: 56, y: 10 });
+        spawns.collectibles.push({ type: 'squeaky', x: 86, y: 8 });
+        // Checkpoint
+        spawns.checkpoints.push({ x: 52, y: 13 });
     } else if (worldNum === 1 && levelNum === 2) {
         // 1-2: Sidewalk Scramble
-        fillGround(0, 49);
+        fillGround(0, 99);
         for (let x = 12; x <= 14; x++) { tiles[14][x] = T.EMPTY; tiles[15][x] = T.EMPTY; tiles[16][x] = T.EMPTY; }
         for (let x = 30; x <= 33; x++) { tiles[14][x] = T.EMPTY; tiles[15][x] = T.EMPTY; tiles[16][x] = T.EMPTY; }
         addPlatform(10, 11, 4);
@@ -398,7 +425,7 @@ function createLevel(worldNum, levelNum) {
         addPlatform(20, 11, 5);
         addPlatform(34, 11, 3);
         addPlatform(40, 10, 4);
-        tiles[12][47] = T.DOOR; tiles[13][47] = T.DOOR;
+        tiles[12][97] = T.DOOR; tiles[13][97] = T.DOOR;
         spawns.enemies.push({ type: 'vacuum', x: 8, y: 13 });
         spawns.enemies.push({ type: 'mailman', x: 18, y: 13 });
         spawns.enemies.push({ type: 'vacuum', x: 25, y: 13 });
@@ -411,13 +438,28 @@ function createLevel(worldNum, levelNum) {
         spawns.collectibles.push({ type: 'golden', x: 22, y: 10 });
         spawns.collectibles.push({ type: 'water', x: 37, y: 10 });
         tiles[14][15] = T.BARRIER; tiles[14][16] = T.BARRIER;
+        // === SECOND HALF (x=50-97) ===
+        for (let x = 60; x <= 63; x++) { tiles[14][x] = T.EMPTY; tiles[15][x] = T.EMPTY; tiles[16][x] = T.EMPTY; }
+        for (let x = 80; x <= 82; x++) { tiles[14][x] = T.EMPTY; tiles[15][x] = T.EMPTY; tiles[16][x] = T.EMPTY; }
+        addPlatform(55, 11, 4); addPlatform(64, 11, 3); addPlatform(70, 9, 4);
+        addPlatform(76, 11, 4); addPlatform(83, 11, 3); addPlatform(88, 10, 4);
+        addPlatform(93, 11, 3);
+        tiles[14][68] = T.BARRIER; tiles[14][69] = T.BARRIER;
+        spawns.enemies.push({ type: 'vacuum', x: 57, y: 13 });
+        spawns.enemies.push({ type: 'mailman', x: 72, y: 13 });
+        spawns.enemies.push({ type: 'sprinkler', x: 85, y: 13 });
+        spawns.enemies.push({ type: 'vacuum', x: 94, y: 13 });
+        addTreats(52, 13, 5); addTreats(66, 13, 4); addTreats(84, 13, 1); addTreats(86, 13, 2);
+        spawns.collectibles.push({ type: 'squeaky', x: 71, y: 8 });
+        spawns.collectibles.push({ type: 'water', x: 77, y: 10 });
+        spawns.checkpoints.push({ x: 52, y: 13 });
     } else if (worldNum === 1 && levelNum === 3) {
         // 1-3: The Dog Park (vertical platforming)
-        fillGround(0, 49);
+        fillGround(0, 99);
         addPlatform(5, 11, 3); addPlatform(10, 10, 3); addPlatform(15, 8, 3);
         addPlatform(20, 6, 4); addPlatform(26, 8, 3); addPlatform(30, 10, 3);
         addPlatform(35, 7, 4); addPlatform(40, 9, 3); addPlatform(44, 11, 3);
-        tiles[12][47] = T.DOOR; tiles[13][47] = T.DOOR;
+        tiles[12][97] = T.DOOR; tiles[13][97] = T.DOOR;
         spawns.enemies.push({ type: 'squirrel', x: 12, y: 9 });
         spawns.enemies.push({ type: 'squirrel', x: 22, y: 5 });
         spawns.enemies.push({ type: 'squirrel', x: 36, y: 6 });
@@ -429,6 +471,21 @@ function createLevel(worldNum, levelNum) {
         spawns.collectibles.push({ type: 'squeaky', x: 41, y: 8 });
         spawns.collectibles.push({ type: 'golden', x: 37, y: 6 });
         spawns.collectibles.push({ type: 'water', x: 27, y: 7 });
+        // === SECOND HALF (x=50-97) — more vertical platforming ===
+        addPlatform(50, 11, 3); addPlatform(55, 9, 3); addPlatform(60, 7, 4);
+        addPlatform(65, 9, 3); addPlatform(70, 11, 3); addPlatform(74, 9, 3);
+        addPlatform(78, 7, 4); addPlatform(83, 9, 3); addPlatform(88, 11, 3);
+        addPlatform(93, 11, 4);
+        spawns.enemies.push({ type: 'squirrel', x: 57, y: 8 });
+        spawns.enemies.push({ type: 'squirrel', x: 75, y: 8 });
+        spawns.enemies.push({ type: 'sprinkler', x: 70, y: 13 });
+        spawns.enemies.push({ type: 'squirrel', x: 84, y: 8 });
+        addTreats(51, 13, 3); addTreats(66, 13, 3); addTreats(89, 13, 3);
+        spawns.collectibles.push({ type: 'squeaky', x: 61, y: 6 });
+        spawns.collectibles.push({ type: 'squeaky', x: 79, y: 6 });
+        spawns.collectibles.push({ type: 'water', x: 66, y: 8 });
+        spawns.collectibles.push({ type: 'golden', x: 78, y: 6 });
+        spawns.checkpoints.push({ x: 52, y: 13 });
     } else if (worldNum === 1 && levelNum === 4) {
         // 1-4: Dogcatcher Chase (auto-scroll boss)
         fillGround(0, 79, 14);
@@ -465,11 +522,11 @@ function createLevel(worldNum, levelNum) {
         spawns.checkpoints.push({ x: 35, y: 13 });
     } else if (worldNum === 2 && levelNum === 1) {
         // 2-1: Alley Cats
-        fillGround(0, 49);
+        fillGround(0, 99);
         addPlatform(6, 11, 4, T.BRICK); addPlatform(14, 8, 5, T.BRICK);
         addPlatform(22, 11, 3, T.BRICK); addPlatform(28, 9, 4, T.BRICK);
         addPlatform(35, 7, 4, T.BRICK); addPlatform(42, 10, 3, T.BRICK);
-        tiles[12][47] = T.DOOR; tiles[13][47] = T.DOOR;
+        tiles[12][97] = T.DOOR; tiles[13][97] = T.DOOR;
         spawns.enemies.push({ type: 'cat', x: 10, y: 9 });
         spawns.enemies.push({ type: 'cat', x: 24, y: 10 });
         spawns.enemies.push({ type: 'cat', x: 37, y: 6 });
@@ -482,6 +539,20 @@ function createLevel(worldNum, levelNum) {
         spawns.collectibles.push({ type: 'squeaky', x: 29, y: 8 });
         spawns.collectibles.push({ type: 'golden', x: 15, y: 7 });
         spawns.collectibles.push({ type: 'water', x: 43, y: 9 });
+        // === SECOND HALF ===
+        addPlatform(52, 11, 4, T.BRICK); addPlatform(58, 9, 4, T.BRICK);
+        addPlatform(64, 11, 3, T.BRICK); addPlatform(70, 8, 4, T.BRICK);
+        addPlatform(76, 11, 4, T.BRICK); addPlatform(82, 9, 3, T.BRICK);
+        addPlatform(88, 11, 4, T.BRICK); addPlatform(93, 11, 3, T.BRICK);
+        spawns.enemies.push({ type: 'cat', x: 55, y: 10 });
+        spawns.enemies.push({ type: 'pigeon', x: 65, y: 5 });
+        spawns.enemies.push({ type: 'cat', x: 78, y: 10 });
+        spawns.enemies.push({ type: 'mailman', x: 90, y: 13 });
+        addTreats(53, 13, 4); addTreats(65, 13, 3); addTreats(77, 13, 4); addTreats(89, 13, 3);
+        spawns.collectibles.push({ type: 'squeaky', x: 59, y: 8 });
+        spawns.collectibles.push({ type: 'squeaky', x: 71, y: 7 });
+        spawns.collectibles.push({ type: 'water', x: 83, y: 8 });
+        spawns.checkpoints.push({ x: 52, y: 13 });
     } else if (worldNum === 2 && levelNum === 2) {
         // 2-2: Rooftop Run
         fillGround(0, 5);
@@ -494,8 +565,8 @@ function createLevel(worldNum, levelNum) {
         addPlatform(37, 9, 5, T.BRICK);
         // gap x=42-47: need moving platform to reach door
         addPlatform(47, 11, 2, T.BRICK);
-        tiles[9][47] = T.DOOR; tiles[10][47] = T.DOOR;
-        spawns.door = { x: 47, y: 9 };
+        tiles[9][97] = T.DOOR; tiles[10][97] = T.DOOR;
+        spawns.door = { x: 97, y: 9 };
         spawns.enemies.push({ type: 'squirrel', x: 15, y: 8 });
         spawns.enemies.push({ type: 'cat', x: 27, y: 8 });
         spawns.enemies.push({ type: 'squirrel', x: 39, y: 8 });
@@ -504,15 +575,32 @@ function createLevel(worldNum, levelNum) {
         addTreats(7, 10, 3); addTreats(26, 8, 3); addTreats(38, 8, 4);
         spawns.collectibles.push({ type: 'squeaky', x: 39, y: 7 });
         spawns.collectibles.push({ type: 'squeaky', x: 13, y: 8 });
-        spawns.collectibles.push({ type: 'squeaky', x: 14, y: 8 });
-        spawns.collectibles.push({ type: 'golden', x: 39, y: 7 });
+        spawns.collectibles.push({ type: 'golden', x: 26, y: 7 });
         // Moving platforms — required to cross the big gaps
         spawns.movingPlatforms.push({ x: 19, y: 10, width: 3, dir: 'x', range: 2, speed: 1 });     // bridge gap 1
         spawns.movingPlatforms.push({ x: 31, y: 10, width: 3, dir: 'x', range: 2.5, speed: 1.2 }); // bridge gap 2
         spawns.movingPlatforms.push({ x: 44, y: 10, width: 3, dir: 'y', range: 1.5, speed: 1 });   // elevator to door
+        // === SECOND HALF — more rooftops ===
+        addPlatform(50, 11, 4, T.BRICK); addPlatform(56, 9, 4, T.BRICK);
+        addPlatform(62, 11, 4, T.BRICK); addPlatform(68, 9, 4, T.BRICK);
+        addPlatform(74, 11, 4, T.BRICK); addPlatform(80, 9, 5, T.BRICK);
+        addPlatform(87, 11, 4, T.BRICK); addPlatform(93, 11, 4, T.BRICK);
+        addPlatform(97, 11, 2, T.BRICK);
+        spawns.enemies.push({ type: 'pigeon', x: 58, y: 4 });
+        spawns.enemies.push({ type: 'cat', x: 64, y: 10 });
+        spawns.enemies.push({ type: 'pigeon', x: 75, y: 4 });
+        spawns.enemies.push({ type: 'squirrel', x: 82, y: 8 });
+        addTreats(51, 10, 3); addTreats(63, 10, 3); addTreats(76, 10, 2); addTreats(88, 10, 3);
+        spawns.collectibles.push({ type: 'squeaky', x: 57, y: 8 });
+        spawns.collectibles.push({ type: 'squeaky', x: 81, y: 8 });
+        spawns.collectibles.push({ type: 'golden', x: 69, y: 8 });
+        spawns.collectibles.push({ type: 'water', x: 75, y: 10 });
+        spawns.movingPlatforms.push({ x: 59, y: 10, width: 3, dir: 'x', range: 2, speed: 1.1 });
+        spawns.movingPlatforms.push({ x: 84, y: 10, width: 3, dir: 'y', range: 1.5, speed: 1 });
+        spawns.checkpoints.push({ x: 51, y: 10 });
     } else if (worldNum === 2 && levelNum === 3) {
         // 2-3: Construction Zone
-        fillGround(0, 49);
+        fillGround(0, 99);
         for (let x = 20; x <= 24; x++) { tiles[14][x] = T.EMPTY; tiles[15][x] = T.EMPTY; tiles[16][x] = T.EMPTY; }
         addPlatform(8, 11, 3);
         // gap x=11-25: moving platform required
@@ -523,7 +611,7 @@ function createLevel(worldNum, levelNum) {
         // Cracked floors
         tiles[14][15] = T.CRACKED; tiles[14][16] = T.CRACKED;
         tiles[14][35] = T.CRACKED; tiles[14][36] = T.CRACKED;
-        tiles[12][47] = T.DOOR; tiles[13][47] = T.DOOR;
+        tiles[12][97] = T.DOOR; tiles[13][97] = T.DOOR;
         spawns.enemies.push({ type: 'pigeon', x: 12, y: 6 });
         spawns.enemies.push({ type: 'cat', x: 28, y: 13 });
         spawns.enemies.push({ type: 'cat', x: 38, y: 13 });
@@ -536,6 +624,22 @@ function createLevel(worldNum, levelNum) {
         // Moving platforms — required to cross construction zone gaps
         spawns.movingPlatforms.push({ x: 15, y: 10, width: 3, dir: 'x', range: 3, speed: 0.8 });  // big gap x=11-25
         spawns.movingPlatforms.push({ x: 39, y: 9, width: 3, dir: 'y', range: 2, speed: 0.9 });   // gap x=36-44
+        // === SECOND HALF ===
+        for (let x = 65; x <= 69; x++) { tiles[14][x] = T.EMPTY; tiles[15][x] = T.EMPTY; tiles[16][x] = T.EMPTY; }
+        addPlatform(54, 11, 3); addPlatform(60, 9, 4); addPlatform(70, 11, 3);
+        addPlatform(76, 8, 4); addPlatform(82, 11, 4); addPlatform(88, 11, 3);
+        addPlatform(93, 11, 4);
+        tiles[14][73] = T.CRACKED; tiles[14][74] = T.CRACKED;
+        spawns.enemies.push({ type: 'cat', x: 56, y: 10 });
+        spawns.enemies.push({ type: 'pigeon', x: 68, y: 5 });
+        spawns.enemies.push({ type: 'mailman', x: 84, y: 13 });
+        spawns.enemies.push({ type: 'cat', x: 94, y: 10 });
+        addTreats(52, 13, 4); addTreats(71, 13, 4); addTreats(83, 13, 4);
+        spawns.collectibles.push({ type: 'squeaky', x: 61, y: 8 });
+        spawns.collectibles.push({ type: 'squeaky', x: 77, y: 7 });
+        spawns.collectibles.push({ type: 'water', x: 89, y: 10 });
+        spawns.movingPlatforms.push({ x: 63, y: 10, width: 3, dir: 'x', range: 3, speed: 0.9 });
+        spawns.checkpoints.push({ x: 52, y: 13 });
     } else if (worldNum === 2 && levelNum === 4) {
         // 2-4: Dogcatcher Returns (rooftop boss)
         fillGround(0, 49);
@@ -560,9 +664,15 @@ function createLevel(worldNum, levelNum) {
         for (let x = 23; x <= 30; x++) { tiles[14][x] = T.WATER; tiles[15][x] = T.WATER; tiles[16][x] = T.WATER; }
         addPlatform(24, 13, 2, T.BRIDGE);
         // gap x=26-30: floating log needed to reach other side
-        fillGround(31, 49);
+        fillGround(31, 40);
+        for (let x = 41; x <= 48; x++) { tiles[14][x] = T.WATER; tiles[15][x] = T.WATER; tiles[16][x] = T.WATER; }
+        addPlatform(42, 13, 2, T.BRIDGE); addPlatform(46, 13, 2, T.BRIDGE);
+        fillGround(49, 60);
+        for (let x = 61; x <= 70; x++) { tiles[14][x] = T.WATER; tiles[15][x] = T.WATER; tiles[16][x] = T.WATER; }
+        addPlatform(62, 13, 2, T.BRIDGE); addPlatform(66, 13, 2, T.BRIDGE);
+        fillGround(71, 99);
         addPlatform(3, 11, 3); addPlatform(18, 11, 3); addPlatform(35, 11, 4); addPlatform(42, 9, 3);
-        tiles[12][47] = T.DOOR; tiles[13][47] = T.DOOR;
+        tiles[12][97] = T.DOOR; tiles[13][97] = T.DOOR;
         spawns.enemies.push({ type: 'squirrel', x: 18, y: 13 });
         spawns.enemies.push({ type: 'bear', x: 35, y: 13 });
         spawns.enemies.push({ type: 'porcupine', x: 42, y: 13 });
@@ -575,12 +685,26 @@ function createLevel(worldNum, levelNum) {
         // Floating logs — only way across the river gaps
         spawns.movingPlatforms.push({ x: 13, y: 13, width: 2, dir: 'x', range: 0.8, speed: 1 });  // river gap 1
         spawns.movingPlatforms.push({ x: 28, y: 13, width: 2, dir: 'x', range: 1.5, speed: 0.8 }); // river gap 2 (wider)
+        // === SECOND HALF ===
+        addPlatform(52, 11, 3); addPlatform(56, 9, 3); addPlatform(72, 11, 4);
+        addPlatform(78, 9, 3); addPlatform(84, 11, 4); addPlatform(90, 11, 3);
+        spawns.enemies.push({ type: 'bear', x: 55, y: 13 });
+        spawns.enemies.push({ type: 'porcupine', x: 75, y: 13 });
+        spawns.enemies.push({ type: 'squirrel', x: 86, y: 10 });
+        addTreats(50, 13, 4); addTreats(72, 13, 5); addTreats(85, 13, 4);
+        spawns.collectibles.push({ type: 'squeaky', x: 57, y: 8 });
+        spawns.collectibles.push({ type: 'squeaky', x: 79, y: 8 });
+        spawns.collectibles.push({ type: 'golden', x: 53, y: 10 });
+        spawns.collectibles.push({ type: 'water', x: 73, y: 10 });
+        spawns.movingPlatforms.push({ x: 44, y: 13, width: 2, dir: 'x', range: 1, speed: 0.9 });
+        spawns.movingPlatforms.push({ x: 64, y: 13, width: 2, dir: 'x', range: 1.5, speed: 1 });
+        spawns.checkpoints.push({ x: 52, y: 13 });
     } else if (worldNum === 3 && levelNum === 2) {
         // 3-2: Ice Pond
-        fillGround(0, 49);
-        for (let x = 10; x <= 40; x++) tiles[14][x] = T.ICE;
+        fillGround(0, 99);
+        for (let x = 10; x <= 90; x++) tiles[14][x] = T.ICE;
         addPlatform(15, 11, 3); addPlatform(20, 11, 3); addPlatform(25, 11, 4); addPlatform(35, 11, 3);
-        tiles[12][47] = T.DOOR; tiles[13][47] = T.DOOR;
+        tiles[12][97] = T.DOOR; tiles[13][97] = T.DOOR;
         spawns.enemies.push({ type: 'squirrel', x: 20, y: 13 });
         spawns.enemies.push({ type: 'squirrel', x: 30, y: 13 });
         spawns.enemies.push({ type: 'bear', x: 38, y: 13 });
@@ -591,11 +715,25 @@ function createLevel(worldNum, levelNum) {
         spawns.collectibles.push({ type: 'squeaky', x: 36, y: 10 });
         spawns.collectibles.push({ type: 'golden', x: 21, y: 10 });
         spawns.collectibles.push({ type: 'water', x: 30, y: 13 });
+        // === SECOND HALF — more ice ===
+        addPlatform(50, 11, 3); addPlatform(56, 9, 4); addPlatform(62, 11, 3);
+        addPlatform(68, 11, 4); addPlatform(74, 9, 3); addPlatform(80, 11, 4);
+        addPlatform(86, 11, 3); addPlatform(93, 11, 4);
+        spawns.enemies.push({ type: 'bear', x: 55, y: 13 });
+        spawns.enemies.push({ type: 'porcupine', x: 70, y: 13 });
+        spawns.enemies.push({ type: 'squirrel', x: 82, y: 13 });
+        spawns.enemies.push({ type: 'bear', x: 90, y: 13 });
+        addTreats(51, 13, 3); addTreats(63, 13, 3); addTreats(81, 13, 3); addTreats(87, 13, 3);
+        spawns.collectibles.push({ type: 'squeaky', x: 57, y: 8 });
+        spawns.collectibles.push({ type: 'squeaky', x: 75, y: 8 });
+        spawns.collectibles.push({ type: 'golden', x: 74, y: 8 });
+        spawns.collectibles.push({ type: 'water', x: 69, y: 10 });
+        spawns.checkpoints.push({ x: 52, y: 13 });
     } else if (worldNum === 3 && levelNum === 3) {
         // 3-3: Deep Cave — multi-tiered cavern with 3 height levels
-        fillGround(0, 49);
+        fillGround(0, 99);
         // Cave ceiling
-        for (let x = 0; x <= 49; x++) { tiles[0][x] = T.CAVE_WALL; tiles[1][x] = T.CAVE_WALL; tiles[2][x] = T.CAVE_WALL; }
+        for (let x = 0; x <= 99; x++) { tiles[0][x] = T.CAVE_WALL; tiles[1][x] = T.CAVE_WALL; tiles[2][x] = T.CAVE_WALL; }
         // Stalactite pillars (ceiling to mid-level walls)
         for (let x = 20; x <= 22; x++) { tiles[3][x] = T.CAVE_WALL; tiles[4][x] = T.CAVE_WALL; }
         for (let x = 38; x <= 39; x++) { tiles[3][x] = T.CAVE_WALL; tiles[4][x] = T.CAVE_WALL; tiles[5][x] = T.CAVE_WALL; }
@@ -622,7 +760,7 @@ function createLevel(worldNum, levelNum) {
         // Right side — staircase down to door
         addPlatform(41, 8, 3, T.CAVE_WALL);
         addPlatform(44, 11, 4, T.CAVE_WALL);
-        tiles[12][47] = T.DOOR; tiles[13][47] = T.DOOR;
+        tiles[12][97] = T.DOOR; tiles[13][97] = T.DOOR;
 
         // Enemies — world 3 appropriate
         spawns.enemies.push({ type: 'bear', x: 15, y: 7 });       // on tier 2
@@ -648,7 +786,31 @@ function createLevel(worldNum, levelNum) {
         spawns.collectibles.push({ type: 'water', x: 15, y: 7 });
         spawns.collectibles.push({ type: 'water', x: 35, y: 4 });
 
-        spawns.checkpoints.push({ x: 30, y: 13 });
+        // === SECOND HALF — deeper cave ===
+        // More ceiling
+        for (let x = 50; x <= 55; x++) { tiles[3][x] = T.CAVE_WALL; tiles[4][x] = T.CAVE_WALL; }
+        // Tier 1 platforms
+        addPlatform(52, 11, 4, T.CAVE_WALL); addPlatform(58, 11, 3, T.CAVE_WALL);
+        // Tier 2
+        addPlatform(55, 8, 4, T.CAVE_WALL); addPlatform(63, 8, 3, T.CAVE_WALL);
+        addPlatform(70, 11, 4, T.CAVE_WALL); addPlatform(73, 8, 3, T.CAVE_WALL);
+        // Tier 3
+        addPlatform(57, 5, 3, T.CAVE_WALL); addPlatform(75, 5, 4, T.CAVE_WALL);
+        // Right descent
+        addPlatform(80, 8, 3, T.CAVE_WALL); addPlatform(84, 11, 4, T.CAVE_WALL);
+        addPlatform(90, 11, 4, T.CAVE_WALL); addPlatform(95, 11, 3, T.CAVE_WALL);
+        spawns.enemies.push({ type: 'bear', x: 60, y: 13 });
+        spawns.enemies.push({ type: 'porcupine', x: 72, y: 13 });
+        spawns.enemies.push({ type: 'bear', x: 85, y: 10 });
+        spawns.enemies.push({ type: 'cat', x: 92, y: 10 });
+        addTreats(53, 13, 4); addTreats(71, 13, 4); addTreats(85, 13, 4);
+        addTreats(56, 7, 3); addTreats(74, 7, 3);
+        spawns.collectibles.push({ type: 'squeaky', x: 58, y: 4 });
+        spawns.collectibles.push({ type: 'squeaky', x: 76, y: 4 });
+        spawns.collectibles.push({ type: 'golden', x: 81, y: 7 });
+        spawns.collectibles.push({ type: 'water', x: 64, y: 7 });
+
+        spawns.checkpoints.push({ x: 55, y: 13 });
     } else if (worldNum === 3 && levelNum === 4) {
         // 3-4: Dogcatcher's Lair (final boss) — staircase arena
         fillGround(0, 49);
@@ -675,7 +837,7 @@ function createLevel(worldNum, levelNum) {
         spawns.collectibles.push({ type: 'golden', x: 21, y: 7 });
     } else {
         // Final: Home (victory lap — inside the house!)
-        fillGround(0, 49);
+        fillGround(0, 99);
         // Furniture platforms — couch, table, shelf, bookcase
         addPlatform(6, 11, 6);    // couch
         addPlatform(15, 9, 4);    // kitchen table
@@ -684,10 +846,10 @@ function createLevel(worldNum, levelNum) {
         addPlatform(36, 10, 5);   // TV stand
         addPlatform(43, 8, 4);    // bookcase top
         // Dog bed (exit) at the end
-        tiles[12][47] = T.DOOR; tiles[13][47] = T.DOOR;
-        spawns.door = { x: 47, y: 12 };
+        tiles[12][97] = T.DOOR; tiles[13][97] = T.DOOR;
+        spawns.door = { x: 97, y: 12 };
         // Treats EVERYWHERE — celebration!
-        for (let i = 2; i < 46; i += 2) {
+        for (let i = 2; i < 96; i += 2) {
             spawns.collectibles.push({ type: 'treat', x: i, y: 13 });
         }
         // Treats on furniture too
@@ -702,6 +864,19 @@ function createLevel(worldNum, levelNum) {
         // Water bowls on the floor
         spawns.collectibles.push({ type: 'water', x: 13, y: 13 });
         spawns.collectibles.push({ type: 'water', x: 33, y: 13 });
+        // === SECOND HALF — more rooms ===
+        addPlatform(52, 11, 5);  addPlatform(60, 9, 4);
+        addPlatform(67, 11, 5);  addPlatform(74, 8, 4);
+        addPlatform(80, 11, 5);  addPlatform(88, 10, 4);
+        addPlatform(94, 11, 3);
+        addTreats(53, 10, 4); addTreats(61, 8, 3); addTreats(68, 10, 4);
+        addTreats(75, 7, 3); addTreats(81, 10, 4); addTreats(89, 9, 3);
+        spawns.collectibles.push({ type: 'squeaky', x: 61, y: 8 });
+        spawns.collectibles.push({ type: 'squeaky', x: 75, y: 7 });
+        spawns.collectibles.push({ type: 'squeaky', x: 89, y: 9 });
+        spawns.collectibles.push({ type: 'golden', x: 74, y: 7 });
+        spawns.collectibles.push({ type: 'water', x: 68, y: 13 });
+        spawns.collectibles.push({ type: 'water', x: 85, y: 13 });
     }
 
     return { width: tiles[0].length, height: H, tiles, spawns, world: worldNum, level: levelNum, movingPlatforms: spawns.movingPlatforms || [], checkpoints: spawns.checkpoints || [] };
@@ -2612,9 +2787,16 @@ class WorldMapScene extends Phaser.Scene {
                 const isUnlocked = unlocked.includes(lv);
                 const isCompleted = completed.includes(lv);
                 const color = isCompleted ? 0x40A040 : isUnlocked ? 0x4060A0 : 0x404040;
+                const lvNames = {
+                    '1-1':'Front Yard','1-2':'Sidewalk','1-3':'Dog Park','1-4':'Chase!',
+                    '2-1':'Alley Cats','2-2':'Rooftops','2-3':'Construction','2-4':'Boss!',
+                    '3-1':'River Trail','3-2':'Ice Pond','3-3':'Deep Cave','3-4':'Final Boss!',
+                    'final':'Home'
+                };
+                const displayName = isUnlocked ? (lvNames[lv] || lv) : '???';
                 const rect = this.add.rectangle(lx + 45, ly + 12, 120, 30, color).setStrokeStyle(1, 0x808090);
-                const text = this.add.text(lx + 45, ly + 12, lv === 'final' ? 'HOME' : lv, {
-                    fontSize: '14px', fontFamily: 'monospace', color: isUnlocked ? '#FFFFFF' : '#606060'
+                this.add.text(lx + 45, ly + 12, displayName, {
+                    fontSize: '11px', fontFamily: 'monospace', color: isUnlocked ? '#FFFFFF' : '#606060'
                 }).setOrigin(0.5);
 
                 // Collectible icons inside the button (right side)
@@ -2636,12 +2818,12 @@ class WorldMapScene extends Phaser.Scene {
                 const starKey = this.dog + '-' + lv;
                 const starCount = save.stars && save.stars[starKey] ? save.stars[starKey] : 0;
                 if (starCount > 0) {
-                    this.add.text(rcx, rcy + 18, '\u2605'.repeat(starCount) + '\u2606'.repeat(3 - starCount), {
+                    this.add.text(rcx, rcy + 22, '\u2605'.repeat(starCount) + '\u2606'.repeat(3 - starCount), {
                         fontSize: '8px', fontFamily: 'monospace', color: '#FFD700'
                     }).setOrigin(0.5);
                 }
 
-                this.levelButtons.push({ rect, text, key: lv, unlocked: isUnlocked });
+                this.levelButtons.push({ rect, key: lv, unlocked: isUnlocked });
                 // Touch: tap to select and launch level
                 const btnIdx = this.levelButtons.length - 1;
                 rect.setInteractive();
