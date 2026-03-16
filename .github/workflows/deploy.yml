@@ -1,0 +1,33 @@
+name: Deploy to website
+
+on:
+  push:
+    branches: [main]
+    paths: ['index.html']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout game repo
+        uses: actions/checkout@v4
+
+      - name: Checkout website repo
+        uses: actions/checkout@v4
+        with:
+          repository: mderdzinski/mderdzinski.github.io
+          token: ${{ secrets.DEPLOY_TOKEN }}
+          path: website
+
+      - name: Copy game to website
+        run: cp index.html website/otl.html
+
+      - name: Commit and push
+        run: |
+          cd website
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add otl.html
+          git diff --staged --quiet && echo "No changes" && exit 0
+          git commit -m "update Off the Leash! (auto-deploy from off-the-leash repo)"
+          git push
