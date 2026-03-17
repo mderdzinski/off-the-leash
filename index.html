@@ -207,7 +207,7 @@ function showGameTouchControls(show) {
 // ============================================================
 // SECTION 1: CONSTANTS & CONFIG
 // ============================================================
-const VERSION = '1.1.0';
+const VERSION = '1.1.1';
 const TILE_SIZE = 24;
 const GAME_WIDTH = 640;
 const GAME_HEIGHT = 432;
@@ -2799,22 +2799,9 @@ class WorldMapScene extends Phaser.Scene {
                     fontSize: '11px', fontFamily: 'monospace', color: isUnlocked ? '#FFFFFF' : '#606060'
                 }).setOrigin(0.5);
 
-                // Collectible icons inside the button (right side)
+                // Star rating
                 const rcx = lx + 45;
                 const rcy = ly + 12;
-                const hasSqueaky = save.squeakyToys.some(s => s.startsWith(lv + '-'));
-                const hasGolden = save.goldenTreats.includes(lv);
-                // Use actual sprites scaled down
-                let iconX = rcx + 50;
-                if (hasGolden) {
-                    this.add.image(iconX, rcy, 'golden').setScale(0.8);
-                    iconX -= 18;
-                }
-                if (hasSqueaky) {
-                    this.add.image(iconX, rcy, 'squeaky').setScale(0.7);
-                }
-
-                // Star rating
                 const starKey = this.dog + '-' + lv;
                 const starCount = save.stars && save.stars[starKey] ? save.stars[starKey] : 0;
                 if (starCount > 0) {
@@ -3602,6 +3589,23 @@ class GameScene extends Phaser.Scene {
 
         // Particles emitter (simple)
         this.dustParticles = [];
+
+        // Boss level intro text
+        if (this.levelNum === 4) {
+            const msgs = { 1: 'Run from him!', 2: 'Fight him!', 3: 'Finish him!' };
+            const msg = msgs[this.worldNum];
+            if (msg) {
+                const intro = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 30, msg, {
+                    fontSize: '32px', fontFamily: 'monospace', color: '#FF4040',
+                    stroke: '#000000', strokeThickness: 4
+                }).setOrigin(0.5).setScrollFactor(0).setDepth(200);
+                this.tweens.add({
+                    targets: intro, alpha: 0, y: GAME_HEIGHT / 2 - 60, scaleX: 1.5, scaleY: 1.5,
+                    duration: 200, delay: 500, ease: 'Sine.easeIn',
+                    onComplete: () => intro.destroy()
+                });
+            }
+        }
     }
 
     getTileHexColor(tile) {
