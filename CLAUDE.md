@@ -208,6 +208,20 @@ On death, player respawns at last checkpoint with:
 - ~700ms invincibility (flashing)
 - Chase level: boundary resets near checkpoint, 500ms delay before chase resumes
 
+## Versioning
+
+The version is stored in `const VERSION` near the top of `index.html` and displayed on the title screen.
+
+**Always bump the version when committing changes:**
+
+| Change Type | Bump | Example |
+|------------|------|---------|
+| Bug fixes, collectible repositioning, tuning values | Patch (x.x.+1) | 1.1.0 → 1.1.1 |
+| New features, new enemies, UI changes, level redesigns | Minor (x.+1.0) | 1.1.0 → 1.2.0 |
+| New worlds, major content additions (doubling levels, new dog) | Major (+1.0.0) | 1.1.0 → 2.0.0 |
+
+Update the `const VERSION = 'x.x.x';` line in the constants section before committing.
+
 ## Known Issues / Future Work
 
 ### Polish
